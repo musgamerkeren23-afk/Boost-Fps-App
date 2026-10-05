@@ -26,8 +26,26 @@ jobs:
         with:
           gradle-version: '8.4'
 
-      - name: Build APK with Detailed Logs
-        run: gradle assembleDebug --info --stacktrace
+      - name: Make Gradle executable
+        run: chmod +x gradlew || true
+
+      - name: Build APK
+        run: gradle assembleDebug --stacktrace --full-stacktrace > build.log 2>&1 || true
+
+      - name: Print Error Summary
+        run: |
+          echo "=================== BUILD LOG ERROR ==================="
+          grep -A 20 "* What went wrong:" build.log || cat build.log | tail -n 50
+          echo "======================================================="
+
+      - name: Check Build Result
+        run: |
+          if grep -q "BUILD SUCCESSFUL" build.log; then
+            echo "Build berhasil!"
+          else
+            echo "Build gagal, silakan periksa log di atas."
+            exit 1
+          fi
 
       - name: Upload APK Artifact
         if: success()
