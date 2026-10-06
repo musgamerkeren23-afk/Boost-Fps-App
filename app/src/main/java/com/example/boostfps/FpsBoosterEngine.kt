@@ -32,8 +32,8 @@ object FpsBoosterEngine {
     }
 
     fun setForceGpu(enabled: Boolean): Boolean {
-        // Langsung jalankan command tanpa menyimpan variabel gantung
-        return ShizukuManager.executeCommand("setprop debug.composition.type gpu") != null
+    val propertyValue = if (enabled) "gpu" else "default"
+    return ShizukuManager.executeCommand("setprop debug.composition.type $propertyValue") != null
     }
 
     fun setResolutionHD(): Boolean {
