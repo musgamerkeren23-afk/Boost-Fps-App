@@ -4,24 +4,22 @@ import rikka.shizuku.Shizuku
 
 object ShizukuManager {
 
-    // Cek apakah Shizuku aktif dan memiliki izin
-    fun isShizukuAvailable(): Boolean {
+    fun executeCommand(command: String): Process? {
         return try {
-            Shizuku.pingBinder() && Shizuku.checkSelfPermission() == android.content.pm.PackageManager.PERMISSION_GRANTED
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    // Eksekusi baris perintah shell via Shizuku
-    fun executeCommand(command: String): Boolean {
-        return try {
-            val process = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
-            process.waitFor()
-            process.exitValue() == 0
+            // Menggunakan refleksi untuk mengakses method private newProcess
+            val newProcessMethod = Shizuku::class.java.getDeclaredMethod(
+                "newProcess",
+                Array<String>::class.java,
+                Array<String>::class.java,
+                String::class.java
+            )
+            newProcessMethod.isAccessible = true
+            
+            val cmdArray = arrayOf("sh", "-c", command)
+            newProcessMethod.invoke(null, cmdArray, null, null) as Process
         } catch (e: Exception) {
             e.printStackTrace()
-            false
+            null
         }
     }
 }
