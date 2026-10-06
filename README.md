@@ -7,3 +7,7 @@
 𝙩𝙝𝙞𝙨 𝙖𝙥𝙥 𝙩𝙤 𝙘𝙖𝙣 𝙢𝙖𝙠𝙚 𝙮𝙤𝙪𝙧 𝙧𝙤𝙗𝙡𝙤𝙭 𝙢𝙖𝙠𝙞𝙣𝙜 𝙣𝙤𝙩 𝙡𝙖𝙜𝙜𝙞𝙣𝙜 𝙖𝙣𝙙 𝙢𝙖𝙠𝙞𝙣𝙜 𝙮𝙤𝙪𝙧 𝙜𝙖𝙢𝙚 𝙩𝙤 𝙃𝘿
 
 𝙨𝙤 𝙬𝙝𝙮 𝙮𝙤𝙪 𝙩𝙧𝙮 𝙞𝙩
+
+𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 ↓↓↓
+
+[![Download APK](https://img.shields.io/badge/Download-APK-0B5D37?style=for-the-badge&logo=android&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/Idkbutthismakemewannad34d)
