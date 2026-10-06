@@ -1,23 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#0A1E14">
 
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
+    <!-- Header / Status Bar App -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Status Shizuku: Memeriksa..."
-        android:textSize="18sp"
-        android:layout_marginBottom="24dp" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#0D2B1D">
 
-    <Button
-        android:id="@+id/boostButton"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BOOST FPS ENGINE"
+            android:textColor="#1B8A5A"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status Shizuku: Memeriksa..."
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Navigation Tabs -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Boost FPS" />
+        android:background="#0D2B1D"
+        app:tabTextColor="#80FFFFFF"
+        app:tabSelectedTextColor="#1B8A5A"
+        app:tabIndicatorColor="#1B8A5A"
+        app:tabMode="fixed" />
+
+    <!-- Content Area (Scrollable / ScrollView) -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/tabContentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ================= TAB 1: DASHBOARD ================= -->
+            <LinearLayout
+                android:id="@+id/tabDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuickBoost"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="🚀 QUICK BOOST FPS"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#1B8A5A"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quick Actions"
+                    android:textColor="#1B8A5A"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchFastWifi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fast WiFi (Low Latency Mode)"
+                    android:textColor="#FFFFFF"
+                    android:padding="8dp" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchForceGpu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Force 2D GPU Rendering"
+                    android:textColor="#FFFFFF"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+            <!-- ================= TAB 2: CONFIG ================= -->
+            <LinearLayout
+                android:id="@+id/tabConfig"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FPS Cap Settings"
+                    android:textColor="#1B8A5A"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/inputFpsCap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contoh: 60, 90, 120"
+                    android:inputType="number"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#80FFFFFF"
+                    android:backgroundTint="#1B8A5A"/>
+
+                <Button
+                    android:id="@+id/btnApplyFpsCap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Terapkan FPS Cap"
+                    android:backgroundTint="#0D5D37"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Resolusi Layar (Density/WM Size)"
+                    android:textColor="#1B8A5A"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnRes720p"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="HD (720p)"
+                        android:layout_marginEnd="4dp"
+                        android:backgroundTint="#0D5D37"/>
+
+                    <Button
+                        android:id="@+id/btnResReset"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Reset Default"
+                        android:layout_marginStart="4dp"
+                        android:backgroundTint="#880000"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ================= TAB 3: CUSTOM SCRIPT ================= -->
+            <LinearLayout
+                android:id="@+id/tabScript"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tulis Custom Shell Command"
+                    android:textColor="#1B8A5A"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/inputCustomScript"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="top"
+                    android:hint="Contoh: settings put global window_animation_scale 0"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#80FFFFFF"
+                    android:background="#05140D"
+                    android:padding="8dp"/>
+
+                <Button
+                    android:id="@+id/btnRunScript"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jalankan Script"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="#1B8A5A"/>
+            </LinearLayout>
+
+            <!-- ================= TAB 4: SETTINGS ================= -->
+            <LinearLayout
+                android:id="@+id/tabSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btnRecheckShizuku"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Check / Request Shizuku Permission"
+                    android:backgroundTint="#0D5D37"/>
+
+                <Button
+                    android:id="@+id/btnResetAll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Reset Semua Pengaturan System"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="#880000"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
