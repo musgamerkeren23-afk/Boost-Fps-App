@@ -4,21 +4,20 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/statusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FPS Booster Shizuku"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:text="Status Shizuku: Memeriksa..."
+        android:textSize="18sp"
+        android:layout_marginBottom="24dp" />
 
     <Button
-        android:id="@+id/btnBoost"
-        android:layout_width="match_parent"
+        android:id="@+id/boostButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Aktifkan FPS Boost" />
+        android:text="Boost FPS" />
 
 </LinearLayout>
