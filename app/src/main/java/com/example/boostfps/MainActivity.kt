@@ -2,7 +2,10 @@ package com.example.boostfps
 
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.tabs.TabLayout
@@ -12,8 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var statusText: TextView
     private lateinit var tabLayout: TabLayout
-    
-    // Layout Tab Containers
+
     private lateinit var tabDashboard: View
     private lateinit var tabConfig: View
     private lateinit var tabScript: View
@@ -23,24 +25,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        statusText = findViewById(R.id.statusText)
-        tabLayout = findViewById(R.id.tabLayout)
+        try {
+            statusText = findViewById(R.id.statusText)
+            tabLayout = findViewById(R.id.tabLayout)
 
-        tabDashboard = findViewById(R.id.tabDashboard)
-        tabConfig = findViewById(R.id.tabConfig)
-        tabScript = findViewById(R.id.tabScript)
-        tabSettings = findViewById(R.id.tabSettings)
+            tabDashboard = findViewById(R.id.tabDashboard)
+            tabConfig = findViewById(R.id.tabConfig)
+            tabScript = findViewById(R.id.tabScript)
+            tabSettings = findViewById(R.id.tabSettings)
 
-        setupTabs()
-        setupDashboardUI()
-        setupConfigUI()
-        setupScriptUI()
-        setupSettingsUI()
+            setupTabs()
+            setupDashboardUI()
+            setupConfigUI()
+            setupScriptUI()
+            setupSettingsUI()
 
-        checkShizukuStatus()
+            checkShizukuStatus()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Terjadi kesalahan inisialisasi UI: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setupTabs() {
+        tabLayout.removeAllTabs()
         tabLayout.addTab(tabLayout.newTab().setText("Dashboard"))
         tabLayout.addTab(tabLayout.newTab().setText("Config"))
         tabLayout.addTab(tabLayout.newTab().setText("Script"))
@@ -66,20 +74,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkShizukuStatus() {
-        if (Shizuku.pingBinder()) {
-            if (Shizuku.checkSelfPermission() == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                statusText.text = "Status Shizuku: Terhubung & Diizinkan ✅"
+        try {
+            if (Shizuku.pingBinder()) {
+                if (Shizuku.checkSelfPermission() == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    statusText.text = "Status Shizuku: Terhubung & Diizinkan ✅"
+                } else {
+                    statusText.text = "Status Shizuku: Meminta Izin..."
+                    Shizuku.requestPermission(0)
+                }
             } else {
-                statusText.text = "Status Shizuku: Meminta Izin..."
-                Shizuku.requestPermission(0)
+                statusText.text = "Status Shizuku: Tidak Aktif / Belum Berjalan ❌"
             }
-        } else {
-            statusText.text = "Status Shizuku: Tidak Aktif ❌"
+        } catch (e: Exception) {
+            statusText.text = "Status Shizuku: Layanan tidak ditemukan ❌"
         }
     }
 
     private fun setupDashboardUI() {
-        findViewById<Button>(R.id.btnQuickBoost).setOnClickListener {
+        findViewById<Button>(R.id.btnQuickBoost)?.setOnClickListener {
             if (FpsBoosterEngine.applyQuickBoost()) {
                 Toast.makeText(this, "Quick Boost Berhasil!", Toast.LENGTH_SHORT).show()
             } else {
@@ -87,19 +99,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<MaterialSwitch>(R.id.switchFastWifi).setOnCheckedChangeListener { _, isChecked ->
+        findViewById<MaterialSwitch>(R.id.switchFastWifi)?.setOnCheckedChangeListener { _, isChecked ->
             FpsBoosterEngine.setFastWifi(isChecked)
         }
 
-        findViewById<MaterialSwitch>(R.id.switchForceGpu).setOnCheckedChangeListener { _, isChecked ->
+        findViewById<MaterialSwitch>(R.id.switchForceGpu)?.setOnCheckedChangeListener { _, isChecked ->
             FpsBoosterEngine.setForceGpu(isChecked)
         }
     }
 
     private fun setupConfigUI() {
         val inputFpsCap = findViewById<EditText>(R.id.inputFpsCap)
-        findViewById<Button>(R.id.btnApplyFpsCap).setOnClickListener {
-            val fpsStr = inputFpsCap.text.toString()
+        findViewById<Button>(R.id.btnApplyFpsCap)?.setOnClickListener {
+            val fpsStr = inputFpsCap?.text?.toString().orEmpty()
             if (fpsStr.isNotEmpty()) {
                 val fps = fpsStr.toInt()
                 FpsBoosterEngine.setFpsCap(fps)
@@ -107,12 +119,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnRes720p).setOnClickListener {
+        findViewById<Button>(R.id.btnRes720p)?.setOnClickListener {
             FpsBoosterEngine.setResolutionHD()
             Toast.makeText(this, "Resolusi diubah ke 720p", Toast.LENGTH_SHORT).show()
         }
 
-        findViewById<Button>(R.id.btnResReset).setOnClickListener {
+        findViewById<Button>(R.id.btnResReset)?.setOnClickListener {
             FpsBoosterEngine.resetResolution()
             Toast.makeText(this, "Resolusi di-reset", Toast.LENGTH_SHORT).show()
         }
@@ -120,8 +132,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupScriptUI() {
         val inputScript = findViewById<EditText>(R.id.inputCustomScript)
-        findViewById<Button>(R.id.btnRunScript).setOnClickListener {
-            val script = inputScript.text.toString()
+        findViewById<Button>(R.id.btnRunScript)?.setOnClickListener {
+            val script = inputScript?.text?.toString().orEmpty()
             if (script.isNotEmpty()) {
                 val result = ShizukuManager.executeCommand(script)
                 if (result != null) {
@@ -134,11 +146,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupSettingsUI() {
-        findViewById<Button>(R.id.btnRecheckShizuku).setOnClickListener {
+        findViewById<Button>(R.id.btnRecheckShizuku)?.setOnClickListener {
             checkShizukuStatus()
         }
 
-        findViewById<Button>(R.id.btnResetAll).setOnClickListener {
+        findViewById<Button>(R.id.btnResetAll)?.setOnClickListener {
             FpsBoosterEngine.resetAll()
             Toast.makeText(this, "Semua Pengaturan Di-reset", Toast.LENGTH_SHORT).show()
         }
