@@ -16,10 +16,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Pastikan ID ini sesuai dengan yang ada di activity_main.xml
         statusText = findViewById(R.id.statusText)
         boostButton = findViewById(R.id.boostButton)
 
-        // Request Shizuku permission when starting
         if (Shizuku.pingBinder()) {
             checkShizukuPermission()
         } else {
@@ -28,7 +28,13 @@ class MainActivity : AppCompatActivity() {
 
         boostButton.setOnClickListener {
             if (Shizuku.pingBinder()) {
-                boostFps()
+                val success = FpsBoosterEngine.applyFpsBoost()
+                if (success) {
+                    Toast.makeText(this, "FPS Boost Berhasil!", Toast.LENGTH_SHORT).show()
+                    statusText.text = "Status: Teroptimasi"
+                } else {
+                    Toast.makeText(this, "Gagal mengaplikasikan boost", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(this, "Shizuku belum berjalan!", Toast.LENGTH_SHORT).show()
             }
@@ -40,18 +46,6 @@ class MainActivity : AppCompatActivity() {
             statusText.text = "Status Shizuku: Terhubung & Diizinkan"
         } else {
             Shizuku.requestPermission(0)
-        }
-    }
-
-    private fun boostFps() {
-        // Eksekusi perintah via ShizukuManager (tanpa panggil Shizuku.newProcess langsung)
-        val process = ShizukuManager.executeCommand("echo 3 > /proc/sys/vm/drop_caches")
-        
-        if (process != null) {
-            Toast.makeText(this, "FPS Boost Berhasil Dijalankan!", Toast.LENGTH_SHORT).show()
-            statusText.text = "Status: Optimasi Selesai"
-        } else {
-            Toast.makeText(this, "Gagal menjalankan optimasi FPS", Toast.LENGTH_SHORT).show()
         }
     }
 }
