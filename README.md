@@ -1,13 +1,54 @@
-<img width="160" height="160" alt="1000342720" src="https://github.com/user-attachments/assets/623e9052-7586-4bec-8a7a-2d5f0cf8b1ce" />
+<img width="490" height="490" alt="1000342720" src="https://github.com/user-attachments/assets/4ae35594-85b8-4995-8ad5-608f04a36de3" />
 
-## 𝐁𝐨𝐨𝐬𝐭𝐞𝐫 𝐅𝐏𝐒 𝐀𝐩𝐩
 
-𝙖𝙣 𝙖𝙥𝙥 𝙘𝙖𝙣 𝙢𝙖𝙠𝙚 𝙮𝙤𝙪𝙧 𝙒𝙞𝙁𝙞 𝙖𝙣𝙙 𝙁𝙋𝙎 𝙞𝙨 𝙁𝘼𝙎𝙏𝙀𝙍 𝙏𝙃𝘼𝙉 𝙣𝙤𝙧𝙢𝙖𝙡 𝙨𝙥𝙚𝙚𝙙 𝙖𝙣𝙙
 
-𝙩𝙝𝙞𝙨 𝙖𝙥𝙥 𝙩𝙤 𝙘𝙖𝙣 𝙢𝙖𝙠𝙚 𝙮𝙤𝙪𝙧 𝙧𝙤𝙗𝙡𝙤𝙭 𝙢𝙖𝙠𝙞𝙣𝙜 𝙣𝙤𝙩 𝙡𝙖𝙜𝙜𝙞𝙣𝙜 𝙖𝙣𝙙 𝙢𝙖𝙠𝙞𝙣𝙜 𝙮𝙤𝙪𝙧 𝙜𝙖𝙢𝙚 𝙩𝙤 𝙃𝘿
+# 🚀 Boost-Fps-App (v1.0-beta)
 
-𝙨𝙤 𝙬𝙝𝙮 𝙮𝙤𝙪 𝙩𝙧𝙮 𝙞𝙩
+[![Download v1.0-beta](https://img.shields.io/badge/Download_APK-v1.0--beta-2ba640?style=for-the-badge&logo=github&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/IDKBUTTHISMAKEMEWANNADIED)
+[![Android](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
+[![Shizuku](https://img.shields.io/badge/Requires-Shizuku-blue?style=for-the-badge)](https://shizuku.rikka.app)
 
-𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 ↓↓↓
+Aplikasi Android untuk optimasi performa dan FPS game dengan memanfaatkan akses API **Shizuku** tanpa perlu melakukan *root* penuh pada perangkat.
 
-[![Download APK](https://img.shields.io/badge/Download-APK-0B5D37?style=for-the-badge&logo=android&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/Idkbutthismakemewannad34d)
+> ⚠️ **Status:** **v1.0-beta**. Beberapa fitur masih dalam tahap penyempurnaan dan pengembangan aktif.
+
+---
+
+## ✨ Fitur Utama
+
+- **Integrasi Shizuku Native:** Menjalankan perintah tingkat sistem dengan izin terbatas tanpa butuh *root*.
+- **FPS & Performance Optimization:** Mengoptimalkan alokasi resource perangkat untuk pengalaman main game yang lebih lancar.
+- **Automated CI/CD Build:** Kompilasi APK otomatis berbasis GitHub Actions di setiap *update* repositori.
+
+---
+
+## 📥 Cara Unduh & Instalasi Application
+
+1. **Unduh APK:**
+   - Klik tombol **Download APK** di atas atau kunjungi [Halaman Release v1.0-beta](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/IDKBUTTHISMAKEMEWANNADIED).
+   - Unduh file `app-debug.apk` dari bagian *Assets*.
+
+2. **Prasyarat (Shizuku):**
+   - Pastikan aplikasi **Shizuku** sudah terinstal di HP kamu dan service-nya sudah berjalan (bisa via Wireless Debugging atau ADB PC).
+
+3. **Install & Jalankan:**
+   - Install file `app-debug.apk` pada perangkat Android.
+   - Buka aplikasi **Boost-Fps-App** dan berikan izin (*grant permission*) Shizuku saat diminta.
+
+---
+
+## 🛠️ Panduan Pembuatan / Build dari Source Code
+
+Jika kamu ingin mengompilasi atau mengoperasikan proyek ini sendiri dari *source code*, ikuti panduan berikut:
+
+### Prasyarat System
+- **Android Studio:** Hedgehog | 2023.1.1 atau yang lebih baru.
+- **JDK / Java Version:** Java 17.
+- **Gradle Version:** Gradle 8.4 (AGP 8.1.4).
+
+### Langkah-Langkah Build (Lokal)
+
+1. **Clone Repositori:**
+   ```bash
+   git clone [https://github.com/musgamerkeren23-afk/Boost-Fps-App.git](https://github.com/musgamerkeren23-afk/Boost-Fps-App.git)
+   cd Boost-Fps-App
