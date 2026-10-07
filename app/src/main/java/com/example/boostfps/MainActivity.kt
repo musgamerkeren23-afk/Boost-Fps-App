@@ -1,4 +1,4 @@
-package com.example.boostfps // Sesuaikan dengan package name project kamu
+package com.example.boostfps
 
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,30 +11,39 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val SHIZUKU_CODE = 1001
+    private val REQUEST_CODE_SHIZUKU = 1001
 
     private val onRequestPermissionResultListener =
         Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
-            if (requestCode == SHIZUKU_CODE) {
+            if (requestCode == REQUEST_CODE_SHIZUKU) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Akses Shizuku Diberikan!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Izin Shizuku Diberikan!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "Akses Shizuku Ditolak!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Izin Shizuku Ditolak!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Inisialisasi ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Register listener Shizuku
+        // Registrasi listener permission Shizuku
         Shizuku.addRequestPermissionResultListener(onRequestPermissionResultListener)
 
-        setupUI()
+        binding.btnCheckShizuku.setOnClickListener {
+            checkShizukuPermission()
+        }
+
+        binding.btnExecute.setOnClickListener {
+            val command = binding.etCommand.text.toString().trim()
+            if (command.isNotEmpty()) {
+                executeShizukuCommand(command)
+            } else {
+                Toast.makeText(this, "Perintah tidak boleh kosong", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -42,85 +51,56 @@ class MainActivity : AppCompatActivity() {
         Shizuku.removeRequestPermissionResultListener(onRequestPermissionResultListener)
     }
 
-    private fun setupUI() {
-        // Tombol Request Shizuku
-        binding.btnRequestShizuku?.setOnClickListener {
-            checkAndRequestShizukuPermission()
-        }
-
-        // Tombol Quick Boost
-        binding.btnQuickBoost?.setOnClickListener {
-            quickBoost()
-        }
-
-        // Tombol Resolution 720p
-        binding.btnRes720p?.setOnClickListener {
-            setResolution720p()
-        }
-
-        // Tombol Fast Wi-Fi Scan
-        binding.btnFastWifi?.setOnClickListener {
-            setFastWifiScan()
-        }
-    }
-
-    private fun isShizukuAvailable(): Boolean {
-        return try {
-            Shizuku.pingBinder()
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun checkAndRequestShizukuPermission() {
-        if (!isShizukuAvailable()) {
-            Toast.makeText(this, "Shizuku belum berjalan/terinstall!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Shizuku sudah aktif dan siap digunakan", Toast.LENGTH_SHORT).show()
-        } else {
-            Shizuku.requestPermission(SHIZUKU_CODE)
-        }
-    }
-
-    // --- Fungsi Helper / Utilitas Optimization ---
-
-    private fun quickBoost() {
-        if (!isShizukuAvailable()) {
-            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
-            return
-        }
-        // Tempatkan perintah shell boost kamu di sini
-        executeShellCommand("settings put global process_limit 10")
-        Toast.makeText(this, "Quick Boost Berhasil!", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setResolution720p() {
-        if (!isShizukuAvailable()) {
-            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
-            return
-        }
-        executeShellCommand("wm size 720x1600") // Sesuaikan rasio layar target
-        Toast.makeText(this, "Resolusi diubah ke 720p", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setFastWifiScan() {
-        if (!isShizukuAvailable()) {
-            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
-            return
-        }
-        executeShellCommand("settings put global wifi_scan_throttle_enabled 0")
-        Toast.makeText(this, "Wi-Fi Scan Throttling Dimatikan", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun executeShellCommand(command: String) {
+    private fun checkShizukuPermission() {
         try {
-            Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
+            if (Shizuku.isPreV11()) {
+                Toast.makeText(this, "Versi Shizuku terlalu lama", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Shizuku Aktif & Memiliki Izin", Toast.LENGTH_SHORT).show()
+            } else if (Shizuku.shouldShowRequestPermissionRationale()) {
+                Toast.makeText(this, "Izin Shizuku Diperlukan untuk Fitur ini", Toast.LENGTH_SHORT).show()
+            } else {
+                Shizuku.requestPermission(REQUEST_CODE_SHIZUKU)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Shizuku belum berjalan/terinstall", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * Memanggil Shizuku.newProcess via Reflection karena method newProcess bertipe private di Shizuku API terbaru.
+     */
+    private fun executeShizukuCommand(command: String) {
+        if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Izin Shizuku Belum Diberikan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val cmdArray = arrayOf("sh", "-c", command)
+            
+            // Mengakses method private 'newProcess' via Reflection Java
+            val newProcessMethod = Shizuku::class.java.getDeclaredMethod(
+                "newProcess",
+                Array<String>::class.java,
+                Array<String>::class.java,
+                String::class.java
+            )
+            newProcessMethod.isAccessible = true
+
+            val process = newProcessMethod.invoke(null, cmdArray, null, null) as Process
+
+            val reader = process.inputStream.bufferedReader()
+            val output = reader.readText()
+            process.waitFor()
+
+            binding.tvOutput.text = if (output.isNotEmpty()) output else "Command Executed Successfully"
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Gagal menjalankan perintah: ${e.message}", Toast.LENGTH_SHORT).show()
+            binding.tvOutput.text = "Error executing command: ${e.message}"
         }
     }
 }
