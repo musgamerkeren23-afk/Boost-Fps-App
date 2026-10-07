@@ -1,137 +1,126 @@
-package com.example.boostfps
+package com.example.boostfps // Sesuaikan dengan package name project kamu
 
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.boostfps.databinding.ActivityMainBinding
-import com.google.android.material.tabs.TabLayout
+import rikka.shizuku.Shizuku
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val SHIZUKU_CODE = 1001
+
+    private val onRequestPermissionResultListener =
+        Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
+            if (requestCode == SHIZUKU_CODE) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Akses Shizuku Diberikan!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Akses Shizuku Ditolak!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate()
+        super.onCreate(savedInstanceState)
+        
+        // Inisialisasi ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupTabs()
-        setupListeners()
-        checkShizukuStatus()
+        // Register listener Shizuku
+        Shizuku.addRequestPermissionResultListener(onRequestPermissionResultListener)
+
+        setupUI()
     }
 
-    private fun setupTabs() {
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Dashboard"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Config"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Script"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Settings"))
-
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                hideAllTabs()
-                when (tab?.position) {
-                    0 -> binding.tabDashboard.visibility = View.VISIBLE
-                    1 -> binding.tabConfig.visibility = View.VISIBLE
-                    2 -> binding.tabScript.visibility = View.VISIBLE
-                    3 -> binding.tabSettings.visibility = View.VISIBLE
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
+    override fun onDestroy() {
+        super.onDestroy()
+        Shizuku.removeRequestPermissionResultListener(onRequestPermissionResultListener)
     }
 
-    private fun hideAllTabs() {
-        binding.tabDashboard.visibility = View.GONE
-        binding.tabConfig.visibility = View.GONE
-        binding.tabScript.visibility = View.GONE
-        binding.tabSettings.visibility = View.GONE
-    }
-
-    private fun setupListeners() {
-        // Switch Wi-Fi - Hanya merespons jika disentuh langsung oleh user
-        binding.switchFastWifi.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                val success = FpsBoosterEngine.setFastWifiScan(isChecked)
-                showToast(if (success) "Fast Wi-Fi Scan diubah!" else "Gagal mengubah Fast Wi-Fi")
-            }
-        }
-
-        // Switch Force GPU
-        binding.switchForceGpu.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                val success = FpsBoosterEngine.setForceGpu(isChecked)
-                showToast(if (success) "Force GPU Composition diubah!" else "Gagal mengubah Force GPU")
-            }
+    private fun setupUI() {
+        // Tombol Request Shizuku
+        binding.btnRequestShizuku?.setOnClickListener {
+            checkAndRequestShizukuPermission()
         }
 
         // Tombol Quick Boost
-        binding.btnQuickBoost.setOnClickListener {
-            val success = FpsBoosterEngine.quickBoost()
-            showToast(if (success) "Quick Boost Berhasil!" else "Gagal mengeksekusi Quick Boost")
+        binding.btnQuickBoost?.setOnClickListener {
+            quickBoost()
         }
 
-        // Tombol Config FPS & Resolusi
-        binding.btnApplyFpsCap.setOnClickListener {
-            val fpsText = binding.inputFpsCap.text.toString()
-            if (fpsText.isNotEmpty()) {
-                val success = FpsBoosterEngine.setFpsCap(fpsText.toInt())
-                showToast(if (success) "FPS Cap diset ke $fpsText" else "Gagal set FPS Cap")
-            } else {
-                showToast("Masukkan angka FPS terlebih dahulu")
-            }
+        // Tombol Resolution 720p
+        binding.btnRes720p?.setOnClickListener {
+            setResolution720p()
         }
 
-        binding.btnRes720p.setOnClickListener {
-            val success = FpsBoosterEngine.setResolution720p()
-            showToast(if (success) "Resolusi diubah ke 720p" else "Gagal mengubah resolusi")
-        }
-
-        binding.btnResReset.setOnClickListener {
-            val success = FpsBoosterEngine.resetResolution()
-            showToast(if (success) "Resolusi dikembalikan ke default" else "Gagal reset resolusi")
-        }
-
-        // Tombol Script Custom
-        binding.btnRunScript.setOnClickListener {
-            val script = binding.inputCustomScript.text.toString()
-            if (script.isNotEmpty()) {
-                val output = ShizukuManager.executeCommand(script)
-                showToast(if (output != null) "Script berhasil dijalankan" else "Gagal menjalankan script")
-            } else {
-                showToast("Masukkan perintah script dulu")
-            }
-        }
-
-        // Tombol Settings
-        binding.btnRecheckShizuku.setOnClickListener {
-            checkShizukuStatus()
-        }
-
-        binding.btnResetAll.setOnClickListener {
-            FpsBoosterEngine.resetResolution()
-            FpsBoosterEngine.setFastWifiScan(false)
-            FpsBoosterEngine.setForceGpu(false)
-            binding.switchFastWifi.isChecked = false
-            binding.switchForceGpu.isChecked = false
-            showToast("Semua pengaturan telah di-reset")
+        // Tombol Fast Wi-Fi Scan
+        binding.btnFastWifi?.setOnClickListener {
+            setFastWifiScan()
         }
     }
 
-    private fun checkShizukuStatus() {
-        if (ShizukuManager.isShizukuAvailable()) {
-            binding.statusText.text = "Status Shizuku: Terhubung (Aktif)"
-            binding.statusText.setTextColor(getColor(android.R.color.holo_green_dark))
+    private fun isShizukuAvailable(): Boolean {
+        return try {
+            Shizuku.pingBinder()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun checkAndRequestShizukuPermission() {
+        if (!isShizukuAvailable()) {
+            Toast.makeText(this, "Shizuku belum berjalan/terinstall!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Shizuku sudah aktif dan siap digunakan", Toast.LENGTH_SHORT).show()
         } else {
-            binding.statusText.text = "Status Shizuku: Tidak Terhubung / Butuh Izin"
-            binding.statusText.setTextColor(getColor(android.R.color.holo_red_dark))
-            ShizukuManager.requestPermission()
+            Shizuku.requestPermission(SHIZUKU_CODE)
         }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    // --- Fungsi Helper / Utilitas Optimization ---
+
+    private fun quickBoost() {
+        if (!isShizukuAvailable()) {
+            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Tempatkan perintah shell boost kamu di sini
+        executeShellCommand("settings put global process_limit 10")
+        Toast.makeText(this, "Quick Boost Berhasil!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setResolution720p() {
+        if (!isShizukuAvailable()) {
+            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        executeShellCommand("wm size 720x1600") // Sesuaikan rasio layar target
+        Toast.makeText(this, "Resolusi diubah ke 720p", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setFastWifiScan() {
+        if (!isShizukuAvailable()) {
+            Toast.makeText(this, "Shizuku belum aktif!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        executeShellCommand("settings put global wifi_scan_throttle_enabled 0")
+        Toast.makeText(this, "Wi-Fi Scan Throttling Dimatikan", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun executeShellCommand(command: String) {
+        try {
+            Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Gagal menjalankan perintah: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
