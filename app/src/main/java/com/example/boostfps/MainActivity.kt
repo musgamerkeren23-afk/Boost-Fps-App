@@ -29,21 +29,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Registrasi listener permission Shizuku
         Shizuku.addRequestPermissionResultListener(onRequestPermissionResultListener)
 
-        binding.btnCheckShizuku.setOnClickListener {
-            checkShizukuPermission()
-        }
-
-        binding.btnExecute.setOnClickListener {
-            val command = binding.etCommand.text.toString().trim()
-            if (command.isNotEmpty()) {
-                executeShizukuCommand(command)
-            } else {
-                Toast.makeText(this, "Perintah tidak boleh kosong", Toast.LENGTH_SHORT).show()
-            }
-        }
+        checkShizukuPermission()
     }
 
     override fun onDestroy() {
@@ -59,30 +47,24 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Shizuku Aktif & Memiliki Izin", Toast.LENGTH_SHORT).show()
-            } else if (Shizuku.shouldShowRequestPermissionRationale()) {
-                Toast.makeText(this, "Izin Shizuku Diperlukan untuk Fitur ini", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Shizuku Aktif", Toast.LENGTH_SHORT).show()
             } else {
                 Shizuku.requestPermission(REQUEST_CODE_SHIZUKU)
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Shizuku belum berjalan/terinstall", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Shizuku belum berjalan", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Memanggil Shizuku.newProcess via Reflection karena method newProcess bertipe private di Shizuku API terbaru.
-     */
-    private fun executeShizukuCommand(command: String) {
+    fun runShellCommand(command: String): String {
         if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Izin Shizuku Belum Diberikan", Toast.LENGTH_SHORT).show()
-            return
+            return "Izin Shizuku belum diberikan"
         }
 
-        try {
+        return try {
             val cmdArray = arrayOf("sh", "-c", command)
-            
-            // Mengakses method private 'newProcess' via Reflection Java
+
+            // Memanggil method private 'newProcess' via Reflection
             val newProcessMethod = Shizuku::class.java.getDeclaredMethod(
                 "newProcess",
                 Array<String>::class.java,
@@ -97,10 +79,10 @@ class MainActivity : AppCompatActivity() {
             val output = reader.readText()
             process.waitFor()
 
-            binding.tvOutput.text = if (output.isNotEmpty()) output else "Command Executed Successfully"
+            if (output.isNotEmpty()) output else "Command executed"
         } catch (e: Exception) {
             e.printStackTrace()
-            binding.tvOutput.text = "Error executing command: ${e.message}"
+            "Error: ${e.message}"
         }
     }
 }
