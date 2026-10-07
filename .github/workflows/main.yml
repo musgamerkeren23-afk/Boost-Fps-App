@@ -1,9 +1,7 @@
-name: Android Build Debug
+name: Android Build
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
@@ -20,19 +18,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # Langkah ini otomatis menyiapkan Gradle tanpa perlu gradlew.jar di repo
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      # Menjalankan build dengan flag detail error
       - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace --info --full-stacktrace
-
-      # Opsional: Simpan log ke file jika build gagal agar bisa diunduh
-      - name: Upload Build Reports on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-build-reports
-          path: app/build/reports/
+        run: gradle assembleDebug --stacktrace --info
