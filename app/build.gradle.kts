@@ -4,22 +4,26 @@ plugins {
 }
 
 android {
-    namespace = "com.example.boostfps" // sesuaikan dengan package name kamu
+    namespace = "com.example.boostfpsapp" // sesuaikan dengan package app kamu
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.boostfps"
-        minSdk = 26
+        applicationId = "com.example.boostfpsapp"
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
 
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -30,12 +34,5 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-
-    // Shizuku API
-    implementation("dev.rikka.shizuku:api:13.1.5")
-    implementation("dev.rikka.shizuku:provider:13.1.5")
+    // dependensi kamu di sini
 }
