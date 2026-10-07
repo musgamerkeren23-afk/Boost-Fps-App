@@ -4,17 +4,23 @@ plugins {
 }
 
 android {
-    namespace = "com.example.boostfpsapp" // Ganti dengan package name app kamu
+    namespace = "com.example.boostfps" // Sesuaikan dengan package name app kamu
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.boostfpsapp" // Ganti dengan package name app kamu
+        applicationId = "com.example.boostfps" // Sesuaikan dengan package name app kamu
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // --- AKTIFKAN BINDING DI SINI ---
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 
     buildTypes {
@@ -41,6 +47,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-    
-    // Tambahkan dependensi lain milikmu di sini jika ada (seperti Shizuku)
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    // --- DEPENDENSI SHIZUKU ---
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
 }
