@@ -7,7 +7,7 @@
 
 ## 📦 Download App Versions
 
-[![Download Initial Release](https://img.shields.io/badge/⬇️_DOWNLOAD_v1.0--alpha-informational?style=for-the-badge&logo=github&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/Idkbutthismakemewannad34d)
+[![Download Initial Release](https://img.shields.io/badge/⬇️_DOWNLOAD_v0.5--alpha-informational?style=for-the-badge&logo=github&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/Idkbutthismakemewannad34d)
 [![Download v1.0-beta](https://img.shields.io/badge/⬇️_DOWNLOAD_v1.0--beta-blue?style=for-the-badge&logo=github&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/IDKBUTTHISMAKEMEWANNADIED)
 [![Download Latest Release (v1.5 & v2.0)](https://img.shields.io/badge/🚀_DOWNLOAD_LATEST_(v1.5_&_v2.0)-success?style=for-the-badge&logo=github&logoColor=white)](https://github.com/musgamerkeren23-afk/Boost-Fps-App/releases/tag/Idcbutwhyforthiseasy)
 
