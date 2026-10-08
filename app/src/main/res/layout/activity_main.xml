@@ -1,125 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#121212"
-    tools:context=".MainActivity">
+<LinearLayout android:background="#0D1117" android:layout_height="match_parent" android:layout_width="match_parent" android:orientation="vertical" android:padding="20dp" tools:context=".MainActivity" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+    <!-- Header Judul Aplikasi -->
+    <TextView android:gravity="center" android:id="@+id/tvTitle" android:layout_height="wrap_content" android:layout_marginBottom="24dp" android:layout_width="match_parent" android:text="🚀 BOOST FPS APP" android:textColor="#58A6FF" android:textSize="22sp" android:textStyle="bold"/>
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="FPS &amp; System Booster"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+    <!-- Toggle 1: FPS Boost -->
+    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleFpsBoost" android:layout_height="60dp" android:layout_marginBottom="12dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="🔄 FPS BOOST: OFF (60Hz)" android:textOn="⚡ FPS BOOST: ACTIVE (120Hz)"/>
 
-        <!-- Card Section: Shizuku Status -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#1E1E1E"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:strokeColor="#333333"
-            app:strokeWidth="1dp">
+    <!-- Toggle 2: Anti-Aliasing (New) -->
+    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleAntiAliasing" android:layout_height="60dp" android:layout_marginBottom="12dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="🎮 ANTI-ALIASING: OFF" android:textOn="🎮 ANTI-ALIASING: ON (4x MSAA)"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+    <!-- Toggle 3: Game Turbo Mode (New) -->
+    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleGameTurbo" android:layout_height="60dp" android:layout_marginBottom="20dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="❄️ GAME TURBO: DISABLED" android:textOn="🔥 GAME TURBO: MAXIMUM PERFORMANCE"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Shizuku Service"
-                    android:textColor="#CCCCCC"
-                    android:textSize="14sp" />
+    <!-- Terminal Output Log -->
+    <TextView android:id="@+id/tvOutputHeader" android:layout_height="wrap_content" android:layout_marginBottom="4dp" android:layout_width="match_parent" android:text="SYSTEM LOGS:" android:textColor="#7EE787" android:textSize="12sp" android:textStyle="bold"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRequestShizuku"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Cek / Minta Akses Shizuku"
-                    android:textAllCaps="false"
-                    app:cornerRadius="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+    <ScrollView android:background="#161B22" android:layout_height="0dp" android:layout_weight="1" android:layout_width="match_parent" android:padding="12dp">
 
-        <!-- Card Section: Quick Actions -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#1E1E1E"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:strokeColor="#333333"
-            app:strokeWidth="1dp">
+        <TextView android:id="@+id/tvOutput" android:layout_height="wrap_content" android:layout_width="match_parent" android:text> System initialized. Waiting for action..."
+            android:textColor="#8B949E"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+    </ScrollView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Optimization Tools"
-                    android:textColor="#CCCCCC"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- Button: Quick Boost -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnQuickBoost"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Quick Boost System"
-                    android:textAllCaps="false"
-                    app:backgroundTint="#6200EE"
-                    app:cornerRadius="8dp" />
-
-                <!-- Button: Resolution 720p -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRes720p"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Ubah Resolusi ke 720p"
-                    android:textAllCaps="false"
-                    app:backgroundTint="#03DAC6"
-                    android:textColor="#000000"
-                    app:cornerRadius="8dp" />
-
-                <!-- Button: Fast Wifi -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnFastWifi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Matikan Wi-Fi Throttling"
-                    android:textAllCaps="false"
-                    app:backgroundTint="#018786"
-                    app:cornerRadius="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
