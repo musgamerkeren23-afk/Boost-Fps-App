@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.boostfps.databinding.ActivityMainBinding
@@ -14,7 +15,6 @@ import rikka.shizuku.Shizuku
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val REQUEST_CODE_SHIZUKU = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,11 +45,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 3. FITUR KEREN BARU: Game Governor Turbo Mode (Force Performance Mode)
-        binding.toggleGameTurbo?.setOnCheckedChangeListener { _, isChecked ->
+        // 3. Game Turbo Mode (Diperbaiki: hapus safe call '?.')
+        binding.toggleGameTurbo.setOnCheckedChangeListener { _, isChecked ->
             triggerHapticFeedback()
             if (isChecked) {
-                // Mengubah governor CPU ke performance & matikan thermal throttling
                 applyShizukuCommand("setprop sys.use_fifo_ui 1; chmod 644 /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor")
                 Toast.makeText(this, "🔥 GAME TURBO: MAXIMUM PERFORMANCE!", Toast.LENGTH_SHORT).show()
             } else {
@@ -60,10 +59,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Memberikan Efek Getar Haptic ala Cyberpunk saat menekan Toggle
+     * Memberikan Efek Getar Haptic (Diperbaiki: kompatibel dengan Android 12+ / API 31+)
      */
     private fun triggerHapticFeedback() {
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
