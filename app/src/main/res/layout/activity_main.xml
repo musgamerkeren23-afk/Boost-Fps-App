@@ -1,26 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:background="#0D1117" android:layout_height="match_parent" android:layout_width="match_parent" android:orientation="vertical" android:padding="20dp" tools:context=".MainActivity" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D1117"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".MainActivity">
 
     <!-- Header Judul Aplikasi -->
-    <TextView android:gravity="center" android:id="@+id/tvTitle" android:layout_height="wrap_content" android:layout_marginBottom="24dp" android:layout_width="match_parent" android:text="🚀 BOOST FPS APP" android:textColor="#58A6FF" android:textSize="22sp" android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="🚀 BOOST FPS APP"
+        android:textColor="#58A6FF"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <!-- Toggle 1: FPS Boost -->
-    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleFpsBoost" android:layout_height="60dp" android:layout_marginBottom="12dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="🔄 FPS BOOST: OFF (60Hz)" android:textOn="⚡ FPS BOOST: ACTIVE (120Hz)"/>
+    <ToggleButton
+        android:id="@+id/toggleFpsBoost"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#21262D"
+        android:checked="false"
+        android:textColor="#FFFFFF"
+        android:textOff="🔄 FPS BOOST: OFF (60Hz)"
+        android:textOn="⚡ FPS BOOST: ACTIVE (120Hz)" />
 
-    <!-- Toggle 2: Anti-Aliasing (New) -->
-    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleAntiAliasing" android:layout_height="60dp" android:layout_marginBottom="12dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="🎮 ANTI-ALIASING: OFF" android:textOn="🎮 ANTI-ALIASING: ON (4x MSAA)"/>
+    <!-- Toggle 2: Anti-Aliasing -->
+    <ToggleButton
+        android:id="@+id/toggleAntiAliasing"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#21262D"
+        android:checked="false"
+        android:textColor="#FFFFFF"
+        android:textOff="🎮 ANTI-ALIASING: OFF"
+        android:textOn="🎮 ANTI-ALIASING: ON (4x MSAA)" />
 
-    <!-- Toggle 3: Game Turbo Mode (New) -->
-    <ToggleButton android:backgroundTint="#21262D" android:checked="false" android:id="@+id/toggleGameTurbo" android:layout_height="60dp" android:layout_marginBottom="20dp" android:layout_width="match_parent" android:textColor="#FFFFFF" android:textOff="❄️ GAME TURBO: DISABLED" android:textOn="🔥 GAME TURBO: MAXIMUM PERFORMANCE"/>
+    <!-- Toggle 3: Game Turbo Mode -->
+    <ToggleButton
+        android:id="@+id/toggleGameTurbo"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#21262D"
+        android:checked="false"
+        android:textColor="#FFFFFF"
+        android:textOff="❄️ GAME TURBO: DISABLED"
+        android:textOn="🔥 GAME TURBO: MAXIMUM PERFORMANCE" />
 
     <!-- Terminal Output Log -->
-    <TextView android:id="@+id/tvOutputHeader" android:layout_height="wrap_content" android:layout_marginBottom="4dp" android:layout_width="match_parent" android:text="SYSTEM LOGS:" android:textColor="#7EE787" android:textSize="12sp" android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvOutputHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="SYSTEM LOGS:"
+        android:textColor="#7EE787"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
-    <ScrollView android:background="#161B22" android:layout_height="0dp" android:layout_weight="1" android:layout_width="match_parent" android:padding="12dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#161B22"
+        android:padding="12dp">
 
-        <TextView android:id="@+id/tvOutput" android:layout_height="wrap_content" android:layout_width="match_parent" android:text> System initialized. Waiting for action..."
-            android:textColor="#8B949E"
+        <TextView
+            android:id="@+id/tvOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:fontFamily="monospace"
+            android:text="> System initialized. Waiting for action..."
+            android:textColor="#8B949E"
             android:textSize="12sp" />
     </ScrollView>
 
