@@ -1,11 +1,13 @@
 package com.example.boostfps
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
-import com.example.boostfps.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,34 +15,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val btnApplyBoost = findViewById<Button>(R.id.btnApplyBoost)
-        val switchAntiAliasing = findViewById<SwitchCompat>(R.id.switchAntiAliasing)
+        val btnStartBubble = findViewById<Button>(R.id.btnApplyBoost)
+        btnStartBubble.text = "🟢 Aktifkan Floating Bubble"
 
-        btnApplyBoost.setOnClickListener {
-            val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
-            
-            // Cek status toggle Anti-Aliasing (0 = Matikan untuk performa/FPS tinggi, 1/4 = Aktifkan)
-            val antiAliasingValue = if (switchAntiAliasing.isChecked) "4" else "0"
-            
-            // Buat isi konfigurasi yang mencakup FPS Limit dan Anti-Aliasing
-            val configContent = """
-                <Settings>
-                    <Int name="FramerateLimit">120</Int>
-                    <Int name="AntiAliasingQuality">$antiAliasingValue</Int>
-                </Settings>
-            """.trimIndent()
-
-            // Perintah shell untuk menulis konfigurasi baru ke file target
-            val bashCommand = "echo '$configContent' > $targetFilePath"
-
-            val result = ShizukuHelper.executeRootCommand(bashCommand)
-
-            if (result.contains("ERROR") || result.contains("EXCEPTION")) {
-                Toast.makeText(this, "Gagal menembus folder: $result", Toast.LENGTH_LONG).show()
-            } else {
-                val aaStatus = if (switchAntiAliasing.isChecked) "ON" else "OFF"
-                Toast.makeText(this, "🚀 Boost Diterapkan! (Anti-Aliasing: $aaStatus)", Toast.LENGTH_SHORT).show()
+        btnStartBubble.setOnClickListener {
+            if (checkOverlayPermission()) {
+                val intent = Intent(this, FloatingWidgetService::class.java)
+                startService(intent)
+                Toast.makeText(this, "Floating Bubble diaktifkan! Buka game kamu.", Toast.LENGTH_LONG).show()
+                finish() // Tutup app utama supaya langsung main game
             }
         }
+    }
+
+    private fun checkOverlayPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+            startActivityForResult(intent, 1234)
+            Toast.makeText(this, "Izinkan aplikasi tampil di atas aplikasi lain dulu!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        return true
     }
 }
