@@ -1,10 +1,11 @@
-package com.example.boostfps // Pastikan sama persis
+package com.example.boostfps
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.boostfps.R // <--- Tambahkan import R ini secara eksplisit
+import androidx.appcompat.widget.SwitchCompat
+import com.example.boostfps.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,17 +14,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val btnApplyBoost = findViewById<Button>(R.id.btnApplyBoost)
+        val switchAntiAliasing = findViewById<SwitchCompat>(R.id.switchAntiAliasing)
 
         btnApplyBoost.setOnClickListener {
             val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
-            val bashCommand = "echo '<Settings><Int name=\"FramerateLimit\">120</Int></Settings>' > $targetFilePath"
+            
+            // Cek status toggle Anti-Aliasing (0 = Matikan untuk performa/FPS tinggi, 1/4 = Aktifkan)
+            val antiAliasingValue = if (switchAntiAliasing.isChecked) "4" else "0"
+            
+            // Buat isi konfigurasi yang mencakup FPS Limit dan Anti-Aliasing
+            val configContent = """
+                <Settings>
+                    <Int name="FramerateLimit">120</Int>
+                    <Int name="AntiAliasingQuality">$antiAliasingValue</Int>
+                </Settings>
+            """.trimIndent()
+
+            // Perintah shell untuk menulis konfigurasi baru ke file target
+            val bashCommand = "echo '$configContent' > $targetFilePath"
 
             val result = ShizukuHelper.executeRootCommand(bashCommand)
 
-            if (result.contains("ERROR") || result.contains("EXCEPTION") || result.contains("ERR:")) {
+            if (result.contains("ERROR") || result.contains("EXCEPTION")) {
                 Toast.makeText(this, "Gagal menembus folder: $result", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, "🚀 Berhasil bypass & terapkan FPS!", Toast.LENGTH_SHORT).show()
+                val aaStatus = if (switchAntiAliasing.isChecked) "ON" else "OFF"
+                Toast.makeText(this, "🚀 Boost Diterapkan! (Anti-Aliasing: $aaStatus)", Toast.LENGTH_SHORT).show()
             }
         }
     }
