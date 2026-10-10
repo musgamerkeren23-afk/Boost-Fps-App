@@ -1,9 +1,10 @@
-package com.example.appbooster // Sesuaikan dengan package-mu
+package com.example.boostfps // Pastikan sama persis
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.boostfps.R // <--- Tambahkan import R ini secara eksplisit
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,20 +12,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Hubungkan ke tombol di layout XML
         val btnApplyBoost = findViewById<Button>(R.id.btnApplyBoost)
 
         btnApplyBoost.setOnClickListener {
-            // Path file konfigurasi target di Android/data
             val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
-
-            // Perintah shell untuk inject / bypass setting FPS
             val bashCommand = "echo '<Settings><Int name=\"FramerateLimit\">120</Int></Settings>' > $targetFilePath"
 
-            // Panggil ShizukuHelper
             val result = ShizukuHelper.executeRootCommand(bashCommand)
 
-            // Tampilkan respon / hasil
             if (result.contains("ERROR") || result.contains("EXCEPTION") || result.contains("ERR:")) {
                 Toast.makeText(this, "Gagal menembus folder: $result", Toast.LENGTH_LONG).show()
             } else {
