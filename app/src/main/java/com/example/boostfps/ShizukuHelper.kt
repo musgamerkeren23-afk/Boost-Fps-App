@@ -1,4 +1,4 @@
-package com.example.appbooster // Sesuaikan dengan package-mu
+package com.example.boostfps // Pastikan ini sama persis dengan project kamu
 
 import android.content.pm.PackageManager
 import rikka.shizuku.Shizuku
@@ -7,7 +7,6 @@ import java.io.InputStreamReader
 
 object ShizukuHelper {
 
-    // Cek apakah Shizuku terpasang dan diizinkan
     fun isShizukuReady(): Boolean {
         return try {
             if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) return false
@@ -17,16 +16,14 @@ object ShizukuHelper {
         }
     }
 
-    // Eksekusi perintah bypass
     fun executeRootCommand(command: String): String {
         if (!isShizukuReady()) {
             return "ERROR: Shizuku belum aktif atau izin ditolak!"
         }
 
         return try {
-            // Menggunakan su -c via Shizuku untuk menembus proteksi folder Android/data
-            val fullCommand = arrayOf("su", "-c", command)
-            val process = Shizuku.newProcess(fullCommand, null, null)
+            // Memanggil su -c via Shizuku menggunakan array parameter standar
+            val process = Shizuku.newProcess(arrayOf("su", "-c", command), null, null)
 
             val reader = BufferedReader(InputStreamReader(process.inputStream))
             val errorReader = BufferedReader(InputStreamReader(process.errorStream))
