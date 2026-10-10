@@ -6,6 +6,16 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Switch Anti-Aliasing -->
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchAntiAliasing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="Anti-Aliasing (MSAA)"
+        android:textSize="18sp"
+        android:checked="false" />
+
     <Button
         android:id="@+id/btnApplyBoost"
         android:layout_width="match_parent"
