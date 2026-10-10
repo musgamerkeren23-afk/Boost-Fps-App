@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <!-- Tombol Melayang Utama (Bubble) -->
+    <Button
+        android:id="@+id/bubbleBtn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@android:drawable/ic_menu_manage"
+        android:backgroundTint="#FF6200EE" />
+
+    <!-- Menu Kecil (Muncul saat Bubble diklik) -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_menu_card"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:backgroundTint="#222222">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚡ FPS BOOSTER v2.5"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Toggle Anti-Aliasing -->
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchBubbleAA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Anti-Aliasing"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Tombol Eksekusi Boost -->
+        <Button
+            android:id="@+id/btnBubbleBoost"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Apply Boost"
+            android:textSize="12sp"
+            android:backgroundTint="#03DAC5"/>
+    </LinearLayout>
+
+</LinearLayout>
