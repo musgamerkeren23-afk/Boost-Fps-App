@@ -3,7 +3,7 @@
 
 
 
-# 🚀 Boost-Fps-App (v2-beta)
+# 🚀 Boost-Fps-App (v2.5)
 
 ## 📦 Download App Versions
 
