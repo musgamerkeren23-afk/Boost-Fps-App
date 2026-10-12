@@ -27,7 +27,6 @@ class FloatingWidgetService : Service() {
         Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
             Log.e("FloatingServiceCrash", "Terjadi error tak terduga: ${throwable.message}", throwable)
             try {
-                // Tampilkan pesan error ringkas via Toast (jika UI thread mengizinkan)
                 android.os.Handler(mainLooper).post {
                     Toast.makeText(applicationContext, "⚠️ Service Error: ${throwable.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
@@ -67,23 +66,24 @@ class FloatingWidgetService : Service() {
             val switchAA = floatingView?.findViewById<SwitchCompat>(R.id.switchBubbleAA)
             val btnBoost = floatingView?.findViewById<Button>(R.id.btnBubbleBoost)
 
-            // Fungsi aman untuk memperbarui fokus window
+            // Fungsi aman untuk memperbarui fokus window (bebas dari error null-safety Kotlin)
             fun updateWindowFocus(isFocusable: Boolean) {
                 try {
-                    if (params != null) {
+                    val currentParams = params
+                    if (currentParams != null) {
                         if (isFocusable) {
-                            params?.flags = params?.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
+                            currentParams.flags = currentParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
                         } else {
-                            params?.flags = params?.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            currentParams.flags = currentParams.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         }
-                        windowManager?.updateViewLayout(floatingView, params)
+                        windowManager?.updateViewLayout(floatingView, currentParams)
                     }
                 } catch (e: Exception) {
                     Log.e("FocusError", "Gagal ubah fokus: ${e.message}")
                 }
             }
 
-            // Touch Listener dengan proteksi try-catch
+            // Touch Listener untuk geser (drag) dan klik buka/tutup menu
             bubbleBtn?.setOnTouchListener(object : View.OnTouchListener {
                 private var initialX = 0
                 private var initialY = 0
@@ -135,7 +135,7 @@ class FloatingWidgetService : Service() {
                 }
             })
 
-            // Tombol Boost dengan proteksi error command
+            // Tombol Boost untuk mengeksekusi konfigurasi Shizuku root
             btnBoost?.setOnClickListener {
                 try {
                     val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
