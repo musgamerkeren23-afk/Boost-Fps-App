@@ -27,8 +27,8 @@ class FloatingWidgetService : Service() {
         try {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             
-            // FIX UTAMA: Bungkus Service context dengan Theme AppCompat agar SwitchCompat tidak crash saat di-inflate
-            val themedContext = ContextThemeWrapper(this, R.style.Theme_AppCompat_DayNight_NoActionBar)
+            // FIX: Menggunakan referensi style AppCompat yang valid untuk menghindari InflateException pada SwitchCompat
+            val themedContext = ContextThemeWrapper(this, androidx.appcompat.R.style.Theme_AppCompat_DayNight_NoActionBar)
             floatingView = LayoutInflater.from(themedContext).inflate(R.layout.floating_layout, null)
 
             val LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -78,7 +78,7 @@ class FloatingWidgetService : Service() {
                         }
                         MotionEvent.ACTION_MOVE -> {
                             val dx = (event.rawX - initialTouchX).toInt()
-                            val dy = (event.rawY - initialTouchY).toInt()
+4                            val dy = (event.rawY - initialTouchY).toInt()
                             
                             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                                 isDragging = true
