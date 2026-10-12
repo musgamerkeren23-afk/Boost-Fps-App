@@ -32,17 +32,19 @@ class FloatingWidgetService : Service() {
             WindowManager.LayoutParams.TYPE_PHONE
         }
 
-        params = WindowManager.LayoutParams(
+                params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             LAYOUT_FLAG,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            // HAPUS FLAG_NOT_FOCUSABLE dan ganti jadi 0 (supaya toggle & tombol bisa disentuh aman)
+            0,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
             x = 100
             y = 100
         }
+
 
         windowManager?.addView(floatingView, params)
 
