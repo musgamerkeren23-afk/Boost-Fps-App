@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import android.util.Log
+import androidx.appcompat.view.ContextThemeWrapper
 
 class FloatingWidgetService : Service() {
 
@@ -22,23 +23,13 @@ class FloatingWidgetService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        
-        // Anti-Crash Global Exception Handler untuk Service ini
-        Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
-            Log.e("FloatingServiceCrash", "Terjadi error tak terduga: ${throwable.message}", throwable)
-            try {
-                android.os.Handler(mainLooper).post {
-                    Toast.makeText(applicationContext, "⚠️ Service Error: ${throwable.localizedMessage}", Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
 
         try {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             
-            floatingView = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
+            // FIX UTAMA: Bungkus Service context dengan Theme AppCompat agar SwitchCompat tidak crash saat di-inflate
+            val themedContext = ContextThemeWrapper(this, R.style.Theme_AppCompat_DayNight_NoActionBar)
+            floatingView = LayoutInflater.from(themedContext).inflate(R.layout.floating_layout, null)
 
             val LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -47,6 +38,7 @@ class FloatingWidgetService : Service() {
                 WindowManager.LayoutParams.TYPE_PHONE
             }
 
+            // Tetap gunakan FLAG_NOT_FOCUSABLE agar game Roblox di belakangnya tidak terganggu / pause
             params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -66,76 +58,57 @@ class FloatingWidgetService : Service() {
             val switchAA = floatingView?.findViewById<SwitchCompat>(R.id.switchBubbleAA)
             val btnBoost = floatingView?.findViewById<Button>(R.id.btnBubbleBoost)
 
-            // Fungsi aman untuk memperbarui fokus window (bebas dari error null-safety Kotlin)
-            fun updateWindowFocus(isFocusable: Boolean) {
+            // Logika Touch & Click yang aman dan responsif
+            var isDragging = false
+            var initialX = 0
+            var initialY = 0
+            var initialTouchX = 0f
+            var initialTouchY = 0f
+
+            bubbleBtn?.setOnTouchListener { _, event ->
                 try {
-                    val currentParams = params
-                    if (currentParams != null) {
-                        if (isFocusable) {
-                            currentParams.flags = currentParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
-                        } else {
-                            currentParams.flags = currentParams.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            initialX = params?.x ?: 0
+                            initialY = params?.y ?: 0
+                            initialTouchX = event.rawX
+                            initialTouchY = event.rawY
+                            isDragging = false
+                            true
                         }
-                        windowManager?.updateViewLayout(floatingView, currentParams)
+                        MotionEvent.ACTION_MOVE -> {
+                            val dx = (event.rawX - initialTouchX).toInt()
+                            val dy = (event.rawY - initialTouchY).toInt()
+                            
+                            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                                isDragging = true
+                            }
+
+                            params?.x = initialX + dx
+                            params?.y = initialY + dy
+                            windowManager?.updateViewLayout(floatingView, params)
+                            true
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            if (!isDragging) {
+                                // Toggle buka/tutup menu
+                                if (menuLayout?.visibility == View.VISIBLE) {
+                                    menuLayout.visibility = View.GONE
+                                } else {
+                                    menuLayout?.visibility = View.VISIBLE
+                                }
+                            }
+                            true
+                        }
+                        else -> false
                     }
                 } catch (e: Exception) {
-                    Log.e("FocusError", "Gagal ubah fokus: ${e.message}")
+                    Log.e("FloatingTouch", "Error: ${e.message}")
+                    false
                 }
             }
 
-            // Touch Listener untuk geser (drag) dan klik buka/tutup menu
-            bubbleBtn?.setOnTouchListener(object : View.OnTouchListener {
-                private var initialX = 0
-                private var initialY = 0
-                private var initialTouchX = 0f
-                private var initialTouchY = 0f
-                private var startTime = 0L
-
-                override fun onTouch(v: View, event: MotionEvent): Boolean {
-                    try {
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                initialX = params?.x ?: 0
-                                initialY = params?.y ?: 0
-                                initialTouchX = event.rawX
-                                initialTouchY = event.rawY
-                                startTime = System.currentTimeMillis()
-                                return true
-                            }
-                            MotionEvent.ACTION_MOVE -> {
-                                val dx = (event.rawX - initialTouchX).toInt()
-                                val dy = (event.rawY - initialTouchY).toInt()
-                                
-                                params?.x = initialX + dx
-                                params?.y = initialY + dy
-                                windowManager?.updateViewLayout(floatingView, params)
-                                return true
-                            }
-                            MotionEvent.ACTION_UP -> {
-                                val duration = System.currentTimeMillis() - startTime
-                                val dx = Math.abs((event.rawX - initialTouchX).toInt())
-                                val dy = Math.abs((event.rawY - initialTouchY).toInt())
-
-                                if (duration < 200 && dx < 15 && dy < 15) {
-                                    if (menuLayout?.visibility == View.VISIBLE) {
-                                        menuLayout.visibility = View.GONE
-                                        updateWindowFocus(false)
-                                    } else {
-                                        menuLayout?.visibility = View.VISIBLE
-                                        updateWindowFocus(true)
-                                    }
-                                }
-                                return true
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Log.e("TouchError", "Error pada touch listener: ${e.message}")
-                    }
-                    return false
-                }
-            })
-
-            // Tombol Boost untuk mengeksekusi konfigurasi Shizuku root
+            // Tombol Boost Shizuku / Root
             btnBoost?.setOnClickListener {
                 try {
                     val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
@@ -151,21 +124,19 @@ class FloatingWidgetService : Service() {
                     val bashCommand = "echo '$configContent' > $targetFilePath"
                     val result = ShizukuHelper.executeRootCommand(bashCommand)
 
-                    if (result.contains("ERROR") || result.contains("EXCEPTION")) {
-                        Toast.makeText(this, "Gagal Boost: $result", Toast.LENGTH_SHORT).show()
+                    if (result.contains("ERROR") || result.contains("EXCEPTION") || result.contains("denied")) {
+                        Toast.makeText(this, "Gagal Boost: $result", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(this, "🚀 Berhasil Boost 120 FPS!", Toast.LENGTH_SHORT).show()
                         menuLayout?.visibility = View.GONE
-                        updateWindowFocus(false)
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Terjadi kesalahan saat boost: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Gagal mengeksekusi: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
         } catch (e: Exception) {
-            Log.e("ServiceCreateError", "Gagal menginisialisasi Floating Widget: ${e.message}")
-            Toast.makeText(this, "Gagal memuat Floating UI: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            Log.e("FloatingService", "Gagal inisialisasi: ${e.message}")
         }
     }
 
