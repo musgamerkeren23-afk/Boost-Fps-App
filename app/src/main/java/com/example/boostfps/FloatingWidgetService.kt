@@ -23,12 +23,12 @@ class FloatingWidgetService : Service() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         
-        // Inflate layout floating
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
 
         val LAYOUT_FLAG = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
+            @Suppress("DEPRECATION")
             WindowManager.LayoutParams.TYPE_PHONE
         }
 
@@ -46,27 +46,18 @@ class FloatingWidgetService : Service() {
 
         windowManager?.addView(floatingView, params)
 
-        // Komponen UI di dalam floating
         val bubbleBtn = floatingView?.findViewById<Button>(R.id.bubbleBtn)
         val menuLayout = floatingView?.findViewById<LinearLayout>(R.id.menuLayout)
         val switchAA = floatingView?.findViewById<SwitchCompat>(R.id.switchBubbleAA)
         val btnBoost = floatingView?.findViewById<Button>(R.id.btnBubbleBoost)
 
-        // Logika Klik Bubble (Buka/Tutup Menu)
-        bubbleBtn?.setOnClickListener {
-            if (menuLayout?.visibility == View.VISIBLE) {
-                menuLayout.visibility = View.GONE
-            } else {
-                menuLayout?.visibility = View.VISIBLE
-            }
-        }
-
-        // Logika Tombol Geser (Drag & Drop Bubble)
+        // Perbaikan logika geser dan klik agar menu pasti keluar
         bubbleBtn?.setOnTouchListener(object : View.OnTouchListener {
             private var initialX = 0
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
+            private var startTime = 0L
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 when (event.action) {
@@ -75,12 +66,31 @@ class FloatingWidgetService : Service() {
                         initialY = params!!.y
                         initialTouchX = event.rawX
                         initialTouchY = event.rawY
+                        startTime = System.currentTimeMillis()
                         return true
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        params!!.x = initialX + (event.rawX - initialTouchX).toInt()
-                        params!!.y = initialY + (event.rawY - initialTouchY).toInt()
+                        val dx = (event.rawX - initialTouchX).toInt()
+                        val dy = (event.rawY - initialTouchY).toInt()
+                        
+                        params!!.x = initialX + dx
+                        params!!.y = initialY + dy
                         windowManager?.updateViewLayout(floatingView, params)
+                        return true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        // Jika durasi sentuhan cepat dan pergerakan sangat kecil, anggap sebagai Klik
+                        val duration = System.currentTimeMillis() - startTime
+                        val dx = Math.abs((event.rawX - initialTouchX).toInt())
+                        val dy = Math.abs((event.rawY - initialTouchY).toInt())
+
+                        if (duration < 200 && dx < 15 && dy < 15) {
+                            if (menuLayout?.visibility == View.VISIBLE) {
+                                menuLayout.visibility = View.GONE
+                            } else {
+                                menuLayout?.visibility = View.VISIBLE
+                            }
+                        }
                         return true
                     }
                 }
