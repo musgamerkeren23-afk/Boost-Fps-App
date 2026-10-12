@@ -27,7 +27,6 @@ class FloatingWidgetService : Service() {
         try {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             
-            // FIX: Menggunakan referensi style AppCompat yang valid untuk menghindari InflateException pada SwitchCompat
             val themedContext = ContextThemeWrapper(this, androidx.appcompat.R.style.Theme_AppCompat_DayNight_NoActionBar)
             floatingView = LayoutInflater.from(themedContext).inflate(R.layout.floating_layout, null)
 
@@ -38,7 +37,6 @@ class FloatingWidgetService : Service() {
                 WindowManager.LayoutParams.TYPE_PHONE
             }
 
-            // Tetap gunakan FLAG_NOT_FOCUSABLE agar game Roblox di belakangnya tidak terganggu / pause
             params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -58,7 +56,6 @@ class FloatingWidgetService : Service() {
             val switchAA = floatingView?.findViewById<SwitchCompat>(R.id.switchBubbleAA)
             val btnBoost = floatingView?.findViewById<Button>(R.id.btnBubbleBoost)
 
-            // Logika Touch & Click yang aman dan responsif
             var isDragging = false
             var initialX = 0
             var initialY = 0
@@ -78,7 +75,7 @@ class FloatingWidgetService : Service() {
                         }
                         MotionEvent.ACTION_MOVE -> {
                             val dx = (event.rawX - initialTouchX).toInt()
-4                            val dy = (event.rawY - initialTouchY).toInt()
+                            val dy = (event.rawY - initialTouchY).toInt()
                             
                             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                                 isDragging = true
@@ -91,7 +88,6 @@ class FloatingWidgetService : Service() {
                         }
                         MotionEvent.ACTION_UP -> {
                             if (!isDragging) {
-                                // Toggle buka/tutup menu
                                 if (menuLayout?.visibility == View.VISIBLE) {
                                     menuLayout.visibility = View.GONE
                                 } else {
@@ -108,7 +104,6 @@ class FloatingWidgetService : Service() {
                 }
             }
 
-            // Tombol Boost Shizuku / Root
             btnBoost?.setOnClickListener {
                 try {
                     val targetFilePath = "/sdcard/Android/data/com.roblox.client/files/UserSettings.xml"
